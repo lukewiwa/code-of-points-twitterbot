@@ -74,9 +74,9 @@ class Skill:
             return tweet
 
 # initiate twitter and database objects
-t = init.twit()
-con = init.db_conn()
-cur = con.cursor()
+t = twit()
+con = db_conn()
+cur = cursor()
 
 sql_fetch = '''
     SELECT 
