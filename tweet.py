@@ -49,7 +49,7 @@ class Skill:
         self.value = value
         self.description = description
         
-
+    @property
     def tweet_text(self):
         tweet = '{0[2]} \n'\
         'EG: {0[3]} \n'\
@@ -63,12 +63,13 @@ class Skill:
         else:
             return False
     
+    @property
     def construct_tweet(self):
         if self.tweetable():
-            return [self.tweet_text()]
+            return [self.tweet_text]
         else:
             tweet = []
-            chunks = textwrap.wrap(self.tweet_text(), width=130, replace_whitespace=False)
+            chunks = textwrap.wrap(self.tweet_text, width=130, replace_whitespace=False)
             for i, chunk in enumerate(chunks):
                 tweet.append("{}/ {}".format(i+1, str(chunk)))
             return tweet
@@ -130,7 +131,7 @@ def update_skill(sql, skill):
 skill = Skill(get_skill(sql_fetch))
 update_skill(sql_modify, skill)
 
-tweet_list = skill.construct_tweet()
+tweet_list = skill.construct_tweet
 
 for chunk in tweet_list:
     t.statuses.update(status=chunk)
