@@ -113,28 +113,44 @@ sql_modify = '''
         skill_id = %s
 '''
 
+sql_reset = '''
+    UPDATE
+        skills
+    SET
+        tweeted = FALSE
+'''
 
 def get_skill(sql):
-    cur.execute(sql)
-    (skill,) = cur.fetchall()
+    try:
+        cur.execute(sql)
+        (skill,) = cur.fetchall()
 
-    sid, index, app, eg, value, description = skill
+        sid, index, app, eg, value, description = skill
+    except:
+        skill = False
     
     return skill
 
 def update_skill(sql, skill):
     sql_params = (skill.sid,)
 
-    cur.execute(sql_modify, sql_params)
+    cur.execute(sql, sql_params)
     con.commit()
 
-skill = Skill(get_skill(sql_fetch))
-update_skill(sql_modify, skill)
+def reset_skill_tweets(sql):
+    cur.execute(sql)
+    con.commit()
 
-tweet_list = skill.construct_tweet
 
-for chunk in tweet_list:
-    t.statuses.update(status=chunk)
+if not get_skill(sql_fetch):
+    reset_skill_tweets(sql_reset)
+else:
+    skill = Skill(get_skill(sql_fetch))
+    update_skill(sql_modify, skill)
+    tweet_list = skill.construct_tweet
+
+    for chunk in tweet_list:
+        t.statuses.update(status=chunk)
 
 con.close()
 
